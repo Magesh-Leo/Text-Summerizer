@@ -64,34 +64,39 @@ def sentUrl(uid,url):
                             
                         except Exception:
                             print('p tag loop not working..')
+                            return "Data not Fetching"
                 except Exception:
-                    text=''
-                    for i in range (1,int(len(content))+1):
-                        try:
-                            text += driver.find_element_by_xpath(f'//*[@id="__next"]/div/main/div/div[4]/div/div/div/p[{i}]').text  #//*[@id="__next"]/div/main/div/div[5]/div/div/div/p
-                            #text.append(t)                        
-                        except:
-                            pass
-                    for i in range (1,int(len(content2))+1):
-                        try:
-                            text += driver.find_element_by_xpath(f"//*[contains(@class,'paragraph')][{i}]").text
-                        except:
-                            pass
-                    text.split('\n')
-                    text = [line for line in text.split('\n') if line.strip() != '']
-                    text_summerized = " ".join(text)
-                    
-                    fName = str(uuid.uuid4())    
-                    client = storage.Client()
-                    bucket = client.get_bucket('mydemo-bucket-ts')
-                    new_blob = bucket.blob(f'remote/hackernoon/{fName}.txt')
-                    new_blob.upload_from_string(text_summerized)
-                    print('Upload successfully')
-                    #### create task here ######
-                    create_task(uid=uid,url=url,payload=text_summerized)
-                    ############################
-                    print('summerized')
-                    return text_summerized
+                    try:
+                        text=''
+                        for i in range (1,int(len(content))+1):
+                            try:
+                                text += driver.find_element_by_xpath(f'//*[@id="__next"]/div/main/div/div[4]/div/div/div/p[{i}]').text  #//*[@id="__next"]/div/main/div/div[5]/div/div/div/p
+                                #text.append(t)                        
+                            except:
+                                pass
+                        for i in range (1,int(len(content2))+1):
+                            try:
+                                text += driver.find_element_by_xpath(f"//*[contains(@class,'paragraph')][{i}]").text
+                            except:
+                                pass
+                        text.split('\n')
+                        text = [line for line in text.split('\n') if line.strip() != '']
+                        text_summerized = " ".join(text)
+                        
+                        fName = str(uuid.uuid4())    
+                        client = storage.Client()
+                        bucket = client.get_bucket('mydemo-bucket-ts')
+                        new_blob = bucket.blob(f'remote/hackernoon/{fName}.txt')
+                        new_blob.upload_from_string(text_summerized)
+                        print('Upload successfully')
+                        #### create task here ######
+                        create_task(uid=uid,url=url,payload=text_summerized)
+                        ############################
+                        print('summerized')
+                        return text_summerized
+                    except Exception:
+                        print('p tag loop not working..(Text only)')
+                        return "Data not Fetching"
                 #video content page there is no more text content
                 try:
                     vdeoonly = driver.find_element_by_class_name('html5-video-container')
